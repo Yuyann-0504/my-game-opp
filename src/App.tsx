@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { Lightbulb, Gamepad2, Sparkles, Zap, ChevronRight, Share2, BookOpen, Twitter, Github, MessageCircle, X } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Lightbulb, Gamepad2, Sparkles, Zap, ChevronRight, Share2, BookOpen, Twitter, Github } from "lucide-react";
 import { generateIdea, getDifficultyLabel, type GameIdea, type Difficulty } from "./gameData";
 import { getRecommendationsForGenre } from "./recommendations";
 import { trackAffiliateClick, trackShareClick } from "./analytics";
@@ -32,7 +32,17 @@ function difficultyBadge(d: Difficulty): string {
   return map[d];
 }
 
-function IdeaRow({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: "cyan" | "sky" | "blue"; }) {
+function IdeaRow({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  color: "cyan" | "sky" | "blue";
+}) {
   const borderColor = { cyan: "border-cyan-500/40", sky: "border-sky-500/40", blue: "border-blue-500/40" }[color];
   const bgColor = { cyan: "bg-cyan-500/5", sky: "bg-sky-500/5", blue: "bg-blue-500/5" }[color];
   const textColor = { cyan: "text-cyan-300", sky: "text-sky-300", blue: "text-blue-300" }[color];
@@ -48,51 +58,12 @@ function IdeaRow({ icon, label, value, color }: { icon: React.ReactNode; label: 
   );
 }
 
-function WelcomeModal({ onClose }: { onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fadeIn">
-      <div className="relative w-full max-w-lg rounded-2xl border border-cyan-500/50 bg-gray-900 p-6 shadow-2xl">
-        <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors">
-          <X size={24} />
-        </button>
-        <h2 className="text-2xl font-bold text-center mb-6 text-cyan-400 flex items-center justify-center gap-2">
-          <Sparkles size={20} /> ナビゲーター紹介
-        </h2>
-        
-        <div className="space-y-4 mb-8">
-          <div className="flex gap-4 items-start bg-gray-800/60 p-4 rounded-xl border border-gray-700/50">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center text-xl font-bold shrink-0 text-white shadow-lg">ド</div>
-            <div>
-              <p className="text-xs text-orange-400 font-bold mb-1 tracking-wider">ドラ</p>
-              <p className="text-sm text-gray-200 leading-relaxed">「よう！俺はドラ！ゲーム開発のアイデア出しを手伝うぜ！」</p>
-            </div>
-          </div>
-          <div className="flex gap-4 items-start bg-gray-800/60 p-4 rounded-xl border border-gray-700/50">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-xl font-bold shrink-0 text-white shadow-lg">ユ</div>
-            <div>
-              <p className="text-xs text-purple-400 font-bold mb-1 tracking-wider">ユイ</p>
-              <p className="text-sm text-gray-200 leading-relaxed">「初めまして、ユイです！私たちがこのアプリのナビゲーターを務めます！」</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <a href="https://store.line.me/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-[#06C755] hover:bg-[#05b34c] text-white font-bold transition-all hover:scale-[1.02] shadow-lg shadow-[#06C755]/20">
-            <MessageCircle size={20} />
-            ドラとユイの公式LINEスタンプ発売中！
-          </a>
-          <button onClick={onClose} className="w-full py-3.5 rounded-xl border-2 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10 font-bold transition-colors">
-            さっそくアイデアを生成する
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function AmazonRecommendations({ genre }: { genre: string }) {
   const recommendations = getRecommendationsForGenre(genre);
-  const handleClick = (title: string) => trackAffiliateClick(genre, title);
+
+  const handleClick = (title: string) => {
+    trackAffiliateClick(genre, title);
+  };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -129,6 +100,7 @@ function AmazonRecommendations({ genre }: { genre: string }) {
               </a>
             ))}
           </div>
+
           <p className="text-xs text-amber-300/60 pt-2 border-t border-amber-700/30">
             Amazon アフィリエイトリンク
           </p>
@@ -142,8 +114,9 @@ function AmazonRecommendations({ genre }: { genre: string }) {
 function ShareSection({ idea }: { idea: GameIdea }) {
   const handleShare = (platform: string) => {
     trackShareClick(platform, idea.genre, idea.theme, idea.gimmick);
-    const text = `ドラとユイが新しいゲームのアイデアをくれたよ！\n\n【ゲームアイデア】\nジャンル: ${idea.genre}\nテーマ: ${idea.theme}\nギミック: ${idea.gimmick}\n\n#ゲーム開発 #ドラユイアプリ #indie`;
-    const url = "https://beginner-game-idea-g-a8xf.bolt.host";
+
+    const text = `【ゲーム開発アイデア】\nジャンル: ${idea.genre}\nテーマ: ${idea.theme}\nギミック: ${idea.gimmick}\n難易度: ${getDifficultyLabel(idea.difficulty)}\n\n#ゲーム開発 #indie #GameDev`;
+    const url = "https://game-idea-generator.example.com";
 
     const shareUrls: Record<string, string> = {
       twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
@@ -173,6 +146,7 @@ function ShareSection({ idea }: { idea: GameIdea }) {
             <Twitter size={16} className="group-hover:scale-110 transition-transform" />
             X に投稿
           </button>
+
           <button
             onClick={() => handleShare("note")}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-cyan-600/60 bg-cyan-900/30 hover:bg-cyan-900/60 hover:border-cyan-500 text-cyan-200 hover:text-cyan-100 font-semibold text-sm transition-all duration-200 group"
@@ -181,6 +155,10 @@ function ShareSection({ idea }: { idea: GameIdea }) {
             Note に投稿
           </button>
         </div>
+
+        <p className="text-xs text-gray-400 pt-2 border-t border-purple-700/30">
+          あなたのアイデアをみんなとシェアして、開発のモチベーションを高めましょう
+        </p>
       </div>
     </div>
   );
@@ -189,24 +167,7 @@ function ShareSection({ idea }: { idea: GameIdea }) {
 function IdeaCard({ idea }: { idea: GameIdea }) {
   return (
     <div className="w-full max-w-2xl mx-auto animate-fadeIn space-y-5">
-      
-      <div className="rounded-2xl border border-pink-500/30 bg-gray-900/80 backdrop-blur-sm p-4 flex flex-col sm:flex-row gap-4 items-center justify-between shadow-[0_0_20px_rgba(236,72,153,0.1)]">
-        <div className="flex-1 space-y-2 w-full">
-          <p className="text-sm text-gray-300 bg-gray-800/50 p-2 rounded-lg border border-gray-700/50">
-            <span className="text-orange-400 font-bold mr-1">ドラ：</span>
-            「おっ！『{idea.genre}』か！腕が鳴るぜ！」
-          </p>
-          <p className="text-sm text-gray-300 bg-gray-800/50 p-2 rounded-lg border border-gray-700/50">
-            <span className="text-purple-400 font-bold mr-1">ユイ：</span>
-            「『{idea.theme}』のテーマと上手く合わせるのがコツですね！」
-          </p>
-        </div>
-        <a href="https://store.line.me/" target="_blank" rel="noopener noreferrer" className="shrink-0 flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-3 bg-[#06C755]/20 hover:bg-[#06C755]/30 border border-[#06C755]/50 text-[#06C755] rounded-xl text-sm font-bold transition-all hover:scale-105">
-          <MessageCircle size={18} />
-          LINEスタンプ
-        </a>
-      </div>
-
+      {/* Main idea card */}
       <div className="relative rounded-2xl border border-cyan-500/30 bg-gray-900/80 backdrop-blur-sm overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.15)]">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
         <div className="p-8 space-y-6">
@@ -246,7 +207,10 @@ function IdeaCard({ idea }: { idea: GameIdea }) {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
       </div>
 
+      {/* Amazon recommendations */}
       <AmazonRecommendations genre={idea.genre} />
+
+      {/* Share section */}
       <ShareSection idea={idea} />
     </div>
   );
@@ -255,19 +219,6 @@ function IdeaCard({ idea }: { idea: GameIdea }) {
 export default function App() {
   const [idea, setIdea] = useState<GameIdea | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    const hasSeen = localStorage.getItem("hasSeenWelcome");
-    if (!hasSeen) {
-      setShowModal(true);
-    }
-  }, []);
-
-  const handleCloseModal = () => {
-    localStorage.setItem("hasSeenWelcome", "true");
-    setShowModal(false);
-  };
 
   const handleGenerate = useCallback(() => {
     setIsGenerating(true);
@@ -280,8 +231,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden">
-      {showModal && <WelcomeModal onClose={handleCloseModal} />}
-
+      {/* Ambient background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-96 h-96 rounded-full bg-cyan-500/5 blur-3xl" />
         <div className="absolute top-1/2 -right-40 w-80 h-80 rounded-full bg-blue-500/5 blur-3xl" />
@@ -297,13 +247,16 @@ export default function App() {
       </div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Ad space — top */}
         <div className="w-full px-4 pt-4">
           <div className="max-w-2xl mx-auto rounded-xl border border-dashed border-gray-700 bg-gray-900/40 h-16 flex items-center justify-center">
             <span className="text-xs font-mono tracking-widest text-gray-600 uppercase">広告スペース（728 × 90）</span>
           </div>
         </div>
 
+        {/* Main content */}
         <main className="flex-1 flex flex-col items-center justify-center px-4 py-12 gap-10">
+          {/* Header */}
           <div className="text-center space-y-3">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/5 text-cyan-400 text-xs font-semibold uppercase tracking-widest mb-2">
               <Sparkles size={12} />
@@ -321,6 +274,7 @@ export default function App() {
             </p>
           </div>
 
+          {/* Generate button */}
           <button
             onClick={handleGenerate}
             disabled={isGenerating}
@@ -340,8 +294,10 @@ export default function App() {
             )}
           </button>
 
+          {/* Idea card */}
           {idea && <IdeaCard idea={idea} />}
 
+          {/* Empty state */}
           {!idea && !isGenerating && (
             <div className="text-center space-y-2 opacity-40 select-none">
               <Gamepad2 size={40} className="mx-auto text-gray-600" />
@@ -350,19 +306,12 @@ export default function App() {
           )}
         </main>
 
-        <footer className="text-center py-6 px-4 text-gray-700 text-xs tracking-wide space-y-4">
-          <div>© 2026 Game Idea Generator — for indie developers</div>
-          
-          <div className="flex justify-center gap-6 items-center">
-            <a href="https://x.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-gray-500 hover:text-cyan-400 transition-colors">
-              <Twitter size={14} /> ドラ: @yuyann_ne.kingnights
-            </a>
-            <a href="https://x.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-gray-500 hover:text-cyan-400 transition-colors">
-              <Twitter size={14} /> ユイ: @yuyann_ne.dreamydoo
-            </a>
+        {/* Footer */}
+        <footer className="text-center py-6 px-4 text-gray-700 text-xs tracking-wide space-y-3">
+          <div>
+            © 2026 Game Idea Generator — for indie developers
           </div>
-
-          <div className="pt-2">
+          <div>
             <a
               href="https://amzn.to/4udTrM1"
               target="_blank"
